@@ -17,7 +17,7 @@ const extra = {
 const mixFetchOptions: SetupMixFetchOps = {
   preferredGateway: "E3mvZTHQCdBvhfr178Swx9g4QG3kkRUun7YnToLMcMbM",
   preferredNetworkRequester:
-    "GiRjFWrMxt58pEMuusm4yT3RxoMD1MMPrR9M2N4VWRJP.3CNZBPq4vg7v7qozjGjdPMXcvDmkbWPCgbGCjQVw9n6Z@2xU4CBE6QiiYt6EyBXSALwxkNvM7gqJfjHXaMkjiFmYW",
+    "AQRRAs9oc8QWXAFBs44YhCKUny7AyLsfLy91pwmGgxuf.CWUKoKA1afSKyw5BnFJJg19UDgnaVATupsFhQpyTEBHJ@EBT8jTD8o4tKng2NXrrcrzVhJiBnKpT1bJy5CMeArt2w",
   mixFetchOverride: {
     requestTimeoutMs: 60_000,
   },
@@ -25,30 +25,56 @@ const mixFetchOptions: SetupMixFetchOps = {
   extra,
 };
 
-export function GetFile() {
-  const [html, setHtml] = React.useState("");
-  async function get() {
-    const response = await mixFetch(
-      "https://raw.githubusercontent.com/W3bS3rv3r/webserver/main/Makefile",
-      { mode: "unsafe-ignore-cors" },
-      mixFetchOptions,
-    );
+export function GetPrice() {
+  const [coin, setCoin] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [currency, setCurrency] = React.useState("");
+  const [result, setResult] = React.useState("");
 
-    const text = await response.text();
-    console.log("response was", text);
-    setHtml(html);
+  async function get() {
+    const url =
+      "https://api.coingecko.com/api/v3/simple/price?ids=" +
+      coin +
+      "&vs_currencies=" +
+      currency +
+      "&x_cg_demo_api_key=" +
+      process.env.REACT_APP_API_KEY;
+
+    setIsLoading(true);
+    try {
+      const response = await mixFetch(
+        url,
+        { mode: "unsafe-ignore-cors" },
+        mixFetchOptions,
+      );
+      const obj = await response.json();
+      const price = obj[coin][currency];
+      if (price === undefined) throw new Error("undefined query");
+      setResult("1 " + coin + " = " + price + currency);
+    } catch (err) {
+      setResult(
+        "Could not query the coin " + coin + " in the currency " + currency,
+      );
+    }
+    setIsLoading(false);
   }
 
   return (
     <>
-      <button
-        onClick={() => {
-          get();
-        }}
-      >
-        Get
-      </button>
-      <pre>{html}</pre>
+      <input
+        type="text"
+        placeholder="Enter coin"
+        value={coin}
+        onChange={(e) => setCoin(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Enter currency"
+        value={currency}
+        onChange={(e) => setCurrency(e.target.value)}
+      />
+      <button onClick={get}>Get price</button>
+      {isLoading ? <h3>Fetching...</h3> : <h3>{result}</h3>}
     </>
   );
 }
@@ -56,7 +82,7 @@ export function GetFile() {
 export default function App() {
   return (
     <div>
-      <GetFile />
+      <GetPrice />
     </div>
   );
 }
