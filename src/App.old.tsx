@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import { mixFetch, SetupMixFetchOps } from "@nymproject/mix-fetch-full-fat";
 
@@ -26,32 +26,29 @@ const mixFetchOptions: SetupMixFetchOps = {
 };
 
 export function GetFile() {
-  const [url, setUrl] = useState("");
-  const [html, setHtml] = useState("");
-
+  const [html, setHtml] = React.useState("");
   async function get() {
-    try {
-      const response = await mixFetch(url, { mode: "unsafe-ignore-cors" }, mixFetchOptions);
-      const text = await response.text();
-      setHtml(text);
-    } catch (error) {
-      console.error("Erro ao buscar a URL:", error);
-    }
+    const response = await mixFetch(
+      "https://raw.githubusercontent.com/W3bS3rv3r/webserver/main/Makefile",
+      { mode: "unsafe-ignore-cors" },
+      mixFetchOptions,
+    );
+
+    const text = await response.text();
+    console.log("response was", text);
+    setHtml(html);
   }
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Insira a URL"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <button onClick={get}>Get</button>
-      <div>
-        <pre>{html}</pre>
-      </div>
-    </div>
+    <>
+      <button
+        onClick={() => {
+          get();
+        }}
+      >
+        Get
+      </button>
+    </>
   );
 }
 
@@ -62,4 +59,3 @@ export default function App() {
     </div>
   );
 }
-
