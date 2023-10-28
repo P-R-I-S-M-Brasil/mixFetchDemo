@@ -59,8 +59,8 @@ export function GetPrice() {
     setIsLoading(false);
   }
 
-  return (
-    <>
+ return (
+    <div className="container">
       <input
         type="text"
         placeholder="Enter coin"
@@ -75,8 +75,8 @@ export function GetPrice() {
       />
       <button onClick={get}>Get price</button>
       {isLoading ? <h3>Fetching...</h3> : <h3>{result}</h3>}
-    </>
-  );
+    </div>
+  ); 
 }
 
 export default function App() {

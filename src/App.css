@@ -1,3 +1,13 @@
+/* Centralize o contêiner */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza horizontalmente */
+  justify-content: center; /* Centraliza verticalmente */
+  height: 100vh; /* Define a altura para ocupar a altura total da viewport */
+}
+
+/* Restante do seu arquivo App.css existente */
 .App {
   text-align: center;
 }
@@ -36,3 +46,4 @@
     transform: rotate(360deg);
   }
 }
+
